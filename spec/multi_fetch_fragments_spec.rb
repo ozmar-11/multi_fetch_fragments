@@ -10,7 +10,7 @@ describe MultiFetchFragments do
 
   it "works for passing in a custom key" do
     cache_mock = mock()
-    RAILS_CACHE = cache_mock
+    Rails.cache = cache_mock
     MultiFetchFragments::Railtie.run_initializers
 
     controller = ActionController::Base.new
@@ -18,7 +18,7 @@ describe MultiFetchFragments do
 
     customer = Customer.new("david")
     key = controller.fragment_cache_key([customer, 'key'])
-    
+
     cache_mock.should_receive(:read_multi).with(key).and_return({key => 'Hello'})
 
     view.render(:partial => "views/customer", :collection => [ customer ], :cache => Proc.new{ |item| [item, 'key']}).should == "Hello"
